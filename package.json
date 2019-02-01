@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com:medelman17/graphql-middleware-rollbar.git"
+    "url": "git+https://github.com/medelman17/graphql-middleware-rollbar.git"
   },
   "author": "Michael Edelman <michael@edel.mn>",
   "contributors": [
