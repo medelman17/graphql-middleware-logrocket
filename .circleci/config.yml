@@ -1,0 +1,47 @@
+version: 2
+
+jobs:
+  publish:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run:
+        name: Install Deps
+        command: yarn install
+      - run: yarn test
+      - run: npm publish
+  build:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run: yarn install
+      - run: yarn test
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run: ./node_modules/.bin/semantic-release
+  test:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - restore_cache:
+        name: Restoring Yarn Package Cache
+        keys:
+          - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Deps
+          command: yarn install
+      - run: yarn test
+      - save_cache:
+        name: Saving Yarn Package Cache
+        key: yarn-packages-{{ checksum "yarn.lock "}}
+        paths:
+          - ~/.cache/yarn
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
